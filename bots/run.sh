@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
+# Print the current directory
+echo "Current directory: $(pwd)"
+
 # Change directory to the location of the script
 cd "$(dirname "$0")"
+
+# Print the contents of the current directory
+echo "Contents of the directory: $(ls)"
 
 # Install the required packages from the requirements.txt file
 pip install -r requirements.txt
