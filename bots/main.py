@@ -58,14 +58,11 @@ async def on_message(message):
 
 @bot.event
 async def on_message(message):
-    # Check if the message author is not the bot itself
     if message.author == bot.user:
         return
 
-    # Check if any censored word is in the message
     if any(word in message.content.lower() for word in censored_words):
-        await message.delete()  # Delete the message
-        # Ping the author of the message
+        await message.delete()
         await message.channel.send(f"{message.author.mention}, your message containing a censored word has been deleted.")
 
 @bot.command()
