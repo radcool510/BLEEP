@@ -10,7 +10,9 @@ import time
 from datetime import datetime
 import re
 from discord.ui import Button, View
-
+import json
+import urllib.parse
+from bs4 import BeautifulSoup
 
 
 
@@ -201,5 +203,82 @@ async def who(ctx):
     embedVar.add_field(name="WIP", value="still in development", inline=False)
     embedVar.add_field(name="PLANS", value="alot of plans on me and my devs needs a raise which he dosen't need one", inline=False)
     await ctx.send(embed=embedVar)
+
+@bot.command()
+async def cat(ctx):
+    response = requests.get('https://api.thecatapi.com/v1/images/search')
+    data = response.json()
+    
+    if data and 'url' in data[0]:
+        cat_url = data[0]['url']
+        await ctx.send(cat_url)
+    else:
+      await ctx.send("Sorry,I couldn't fetch a cat image atthemoment.") 
+
+@bot.command()
+async def dog(ctx):
+    response = requests.get('https://api.thedogapi.com/v1/images/search')
+    data = response.json()
+
+    if data and 'url' in data[0]:
+        dog_url = data[0]['url']
+        await ctx.send(dog_url)
+    else:
+        await ctx.send("Sorry, I couldn't fetch a dog image at the moment.")
+
+@bot.command()
+async def echo(ctx, *, message_to_send):
+    if ctx.author.id in allowed_user_ids: 
+        await ctx.message.delete()
+
+        # Send the echoed message
+        await ctx.send(message_to_send)
+    else:
+        await ctx.send("You don't have permission to use this command.")
+
+@bot.command()
+async def update(ctx):
+    try:
+        await ctx.send("Bot successfully updated!")
+        sys.exit(0)
+    except Exception as e:
+        await ctx.send(f"Failed to update the bot: {str(e)}")
+
+@bot.command()
+async def findimage(ctx, *, query):
+    image_results = perform_image_search(query)
+
+    if image_results:
+        await ctx.send("Here are the image my friend:")
+        for result in image_results:
+            await ctx.send(result)
+    else:
+        await ctx.send("No image search results found.")
+
+def perform_web_search(query):
+    try:
+        search_results = list(re.search(query, num=5, stop=5, pause=2))
+        return search_results
+    except Exception as e:
+        print(f"Error performing web search: {e}")
+        return []
+
+def perform_image_search(query):
+    try:
+        # Construct a search URL for image results
+        search_url = f"https://www.google.com/search?q={urllib.parse.quote(query)}&tbm=isch"
+        response = requests.get(search_url)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        image_results = []
+        for img in soup.find_all("img"):
+            img_url = img.get("src")
+            if img_url and img_url.startswith("http"):
+                image_results.append(img_url)
+
+        return image_results[:1]  # Limit to the first 5 results
+    except Exception as e:
+        print(f"Error performing image search: {e}")
+        return []
 
 bot.run(os.environ['TOKEN'])
