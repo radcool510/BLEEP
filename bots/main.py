@@ -18,7 +18,9 @@ from bs4 import BeautifulSoup
 
 bot = commands.Bot("!", intents=discord.Intents.all())
 
-censored_words = ["nigga", "kms", "suicide", "retard","nigger"]
+censored_words = ["nigga", "kms", "suicide", "retard","nigger", "faggot", "kys", "maggot"]
+
+allowed_user_ids = [1116012552728617041, 1097879047213686875, 560925232421011456, 372778919507787788, "1116012552728617041"]
 
 
 
