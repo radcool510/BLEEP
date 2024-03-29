@@ -16,7 +16,7 @@ from bs4 import BeautifulSoup
 
 
 
-bot = commands.Bot("!", intents=discord.Intents.all())
+bot = commands.Bot("%", intents=discord.Intents.all())
 
 censored_words = ["nigga", "kms", "suicide", "retard","nigger", "faggot", "kys", "maggot"]
 
