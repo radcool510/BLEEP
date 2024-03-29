@@ -21,4 +21,4 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: START
-        run: cd bot && bash run.sh
+        run: cd bots && bash run.sh
