@@ -242,7 +242,7 @@ async def echo(ctx, *, message_to_send):
 async def update(ctx):
     try:
         await ctx.send("Bot successfully updated!")
-        sys.exit(0)
+        os.system.exit(0)
     except Exception as e:
         await ctx.send(f"Failed to update the bot: {str(e)}")
 
