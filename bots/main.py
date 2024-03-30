@@ -13,10 +13,10 @@ from discord.ui import Button, View
 import json
 import urllib.parse
 from bs4 import BeautifulSoup
+import requests
 
 
-
-bot = commands.Bot("%", intents=discord.Intents.all())
+bot = commands.Bot("!", intents=discord.Intents.all())
 
 censored_words = ["nigga", "kms", "suicide", "retard","nigger", "faggot", "kys", "maggot"]
 
