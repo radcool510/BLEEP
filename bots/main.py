@@ -60,19 +60,18 @@ async def on_message(message):
     if message.content == "lol":
         await message.channel.send("you got a whole squad laughing", reference=message)
 
-async def on_message_edit(message_before, message_after):
-    if message_before.author == bot.user:
+    if message.author == bot.user:
         return
 
-    if any(word in message_after.content.lower() for word in censored_words):
-        await message_after.delete()
-        await message_after.channel.send(f"{message_after.author.mention}, your message containing a censored word has been deleted.")
+    if any(word in message.content.lower() for word in censored_words):
+        await message.delete()
+        await message.channel.send(f"{message.author.mention}, your message containing a censored word has been deleted.")
         await bot.wait_until_ready()
 
-    guild = message_after.guild
+    guild = message.guild
     muted_role = discord.utils.get(guild.roles, name="Muted")
 
-    member = guild.get_member(message_after.author.id)
+    member = guild.get_member(message.author.id)
     await member.add_roles(muted_role)
 
     time.sleep(300)
