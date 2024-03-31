@@ -12,11 +12,10 @@ import re
 from discord.ui import Button, View
 import json
 import urllib.parse
-from bs4 import BeautifulSoup
 import requests
 
 
-bot = commands.Bot("$", intents=discord.Intents.all())
+bot = commands.Bot("!", intents=discord.Intents.all())
 
 censored_words = ["nigga", "kms", "suicide", "retard","nigger", "faggot", "kys", "maggot"]
 
@@ -60,14 +59,14 @@ async def on_message(message):
     if message.content == "lol":
         await message.channel.send("you got a whole squad laughing", reference=message)
 
-@bot.event
-async def on_message(message):
     if message.author == bot.user:
         return
 
     if any(word in message.content.lower() for word in censored_words):
         await message.delete()
         await message.channel.send(f"{message.author.mention}, your message containing a censored word has been deleted.")
+
+        await bot.process_command(message)
 
 @bot.command()
 async def ascii(ctx):
@@ -245,42 +244,5 @@ async def update(ctx):
         os.system.exit(0)
     except Exception as e:
         await ctx.send(f"Failed to update the bot: {str(e)}")
-
-@bot.command()
-async def findimage(ctx, *, query):
-    image_results = perform_image_search(query)
-
-    if image_results:
-        await ctx.send("Here are the image my friend:")
-        for result in image_results:
-            await ctx.send(result)
-    else:
-        await ctx.send("No image search results found.")
-
-def perform_web_search(query):
-    try:
-        search_results = list(re.search(query, num=5, stop=5, pause=2))
-        return search_results
-    except Exception as e:
-        print(f"Error performing web search: {e}")
-        return []
-
-def perform_image_search(query):
-    try:
-        # Construct a search URL for image results
-        search_url = f"https://www.google.com/search?q={urllib.parse.quote(query)}&tbm=isch"
-        response = requests.get(search_url)
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        image_results = []
-        for img in soup.find_all("img"):
-            img_url = img.get("src")
-            if img_url and img_url.startswith("http"):
-                image_results.append(img_url)
-
-        return image_results[:1]  # Limit to the first 5 results
-    except Exception as e:
-        print(f"Error performing image search: {e}")
-        return []
 
 bot.run(os.environ['TOKEN'])
