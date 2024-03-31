@@ -68,12 +68,12 @@ async def on_message(message):
         await message.channel.send(f"{message.author.mention}, your message containing a censored word has been deleted.")
         await bot.wait_until_ready()
 
-    guild = message.guild
-    muted_role = discord.utils.get(guild.roles, name="Muted")
-    user_roles = member.roles[-1]
-    user_roles.insert(0, muted_role)
-    muted_role_position = max(muted_role.position, highest_role.position - 1)
-    await member.edit(roles=user_roles, reason="Muted for 5 minutes", atomic=True)
+        guild = message.guild
+        muted_role = discord.utils.get(guild.roles, name="Muted")
+        member = guild.get_member(message.author.id)
+        highest_role = member.roles[-1]
+        muted_role_position = max(muted_role.position, highest_role.position - 1)
+        await member.add_roles(muted_role, reason="Muted for 5 minutes", atomic=True)
 
     member = guild.get_member(message.author.id)
     await member.add_roles(muted_role)
