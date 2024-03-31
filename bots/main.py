@@ -66,6 +66,10 @@ async def on_message(message):
     if any(word in message.content.lower() for word in censored_words):
         await message.delete()
         await message.channel.send(f"{message.author.mention}, your message containing a censored word has been deleted.")
+        await asyncio.sleep(300)
+        async for msg in message.channel.history(limit=1):
+            if msg.author == bot.user:
+                await msg.delete()
 
         await bot.process_command(message)
 
