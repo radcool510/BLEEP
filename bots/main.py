@@ -66,12 +66,19 @@ async def on_message(message):
     if any(word in message.content.lower() for word in censored_words):
         await message.delete()
         await message.channel.send(f"{message.author.mention}, your message containing a censored word has been deleted.")
-        await asyncio.sleep(300)
-        async for msg in message.channel.history(limit=1):
-            if msg.author == bot.user:
-                await msg.delete()
+        await bot.wait_until_ready()
 
-        await bot.process_command(message)
+    guild = message.guild
+    muted_role = discord.utils.get(guild.roles, name="Muted")
+
+    member = guild.get_member(message.author.id)
+    await member.add_roles(muted_role)
+
+    time.sleep(300)
+    await member.remove_roles(muted_role)
+
+    
+    await bot.process_command(message)
 
 @bot.command()
 async def ascii(ctx):
