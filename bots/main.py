@@ -70,6 +70,9 @@ async def on_message(message):
 
     guild = message.guild
     muted_role = discord.utils.get(guild.roles, name="Muted")
+    user_roles = member.roles
+    user_roles.insert(0, muted_role)
+    await member.edit(roles=user_roles)
 
     member = guild.get_member(message.author.id)
     await member.add_roles(muted_role)
