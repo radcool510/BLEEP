@@ -60,7 +60,8 @@ async def on_message(message):
     if message.content == "lol":
         await message.channel.send("you got a whole squad laughing", reference=message)
 
-    if message.author == bot.user:
+async def on_message_edit(before, after):
+    if before.author == bot.user:
         return
 
     if any(word in message.content.lower() for word in censored_words):
