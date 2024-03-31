@@ -1,6 +1,7 @@
 import random
 import discord
 import os
+import sys
 from discord.ext import tasks
 from discord.ext.commands import Greedy, Context
 from discord import app_commands
@@ -241,7 +242,7 @@ async def echo(ctx, *, message_to_send):
 async def update(ctx):
     try:
         await ctx.send("Bot successfully updated!")
-        os.system.exit(0)
+        sys.exit(0)
     except Exception as e:
         await ctx.send(f"Failed to update the bot: {str(e)}")
 
