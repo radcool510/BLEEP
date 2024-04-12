@@ -18,7 +18,7 @@ import requests
 
 bot = commands.Bot("!", intents=discord.Intents.all())
 
-censored_words = ["nigga", "kms", "suicide", "retard","nigger", "faggot", "kys", "maggot"]
+
 
 allowed_user_ids = [1116012552728617041, 1097879047213686875, 560925232421011456, 372778919507787788, "1116012552728617041"]
 
@@ -42,7 +42,7 @@ async def on_message(message):
     content = message.content.lower()
 
     if message.content == "uh oh":
-        await message.channel.send("https://cdn.discordapp.com/attachments/1122408339570180147/1137485909453971506/mc.jpg", reference=message)
+        await message.channel.send("https://cdn.discordapp.com/attachments/1196672361500512306/1227729028560064582/5621b2538d52a3bc129972b6634a7b98.png?ex=662976c2&is=661701c2&hm=aa87baba3f577afff81613767bd15d0b75cdb268369aa5fa4906aac3ab8967e1&", reference=message)
 
     if message.content == "XD":
         await message.channel.send("CD", reference=message)
@@ -53,35 +53,18 @@ async def on_message(message):
     if message.content == "<@1116012552728617041>":
         await message.channel.send("HELLO THERE YOU PING AN OWNER SO I WILL DO IT <@1116012552728617041> THIS PERSON IS TELLING YOU SOMETHING", reference=message)
 
-    if message.content == "mad":
-        await message.channel.send("hhttps://discord.com/channels/@me/1122408339570180147/1158486608182513744", reference=message)
+    if message.content == "king":
+        await message.channel.send("", reference=message)
     else:
         await bot.process_commands(message)
     if message.content == "lol":
-        await message.channel.send("you got a whole squad laughing", reference=message)
-
-    if message.author == bot.user:
-        return
-
-    if any(word in message.content.lower() for word in censored_words):
-        await message.delete()
-        await message.channel.send(f"{message.author.mention}, your message containing a censored word has been deleted.")
-        await bot.wait_until_ready()
-
-        guild = message.guild
-        muted_role = discord.utils.get(guild.roles, name="Muted")
-        member = guild.get_member(message.author.id)
-        highest_role = member.roles[-1]
-        muted_role_position = max(muted_role.position, highest_role.position - 1)
-        await member.add_roles(muted_role, reason="Muted for 5 minutes", atomic=True)
-
-    member = guild.get_member(message.author.id)
-    await member.add_roles(muted_role)
-
-    time.sleep(300)
-    await member.remove_roles(muted_role)
-
+        await message.channel.send("you got a whole server laughing", reference=message)
     
+    if message.author.bot is False and message.content:  
+       role = discord.utils.get(message.author.roles, name='REACT') 
+    if role is not None:  
+        reaction = '👋'  
+        await message.add_reaction(reaction)
     await bot.process_command(message)
 
 @bot.command()
