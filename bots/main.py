@@ -63,7 +63,7 @@ async def on_message(message):
     if message.author.bot is False and message.content:  
        role = discord.utils.get(message.author.roles, name='REACT') 
     if role is not None:  
-        reaction = '👋'  
+        reaction = '<:test:1228493580763660319>'  
         await message.add_reaction(reaction)
     await bot.process_command(message)
 
