@@ -14,7 +14,7 @@ from discord.ui import Button, View
 import json
 import urllib.parse
 import requests
-
+from bs4 import BeautifulSoup
 
 bot = commands.Bot("!", intents=discord.Intents.all())
 
@@ -235,6 +235,15 @@ async def echo(ctx, *, message_to_send):
         await ctx.send(message_to_send)
     else:
         await ctx.send("You don't have permission to use this command.")
+
+@bot.command(name="roast")
+async def roast(ctx, member: discord.Member):
+    url = "https://www.roastme.net/"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, "html.parser")
+    roast_messages = soup.find_all("p", class_="roast")
+    roast_message = random.choice(roast_messages).text
+    await ctx.send(f"{member.mention} {roast_message}")
 
 @bot.command()
 async def update(ctx):
