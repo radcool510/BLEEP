@@ -238,12 +238,11 @@ async def echo(ctx, *, message_to_send):
 
 @bot.command(name="roast")
 async def roast(ctx, member: discord.Member):
-    url = "https://www.roastme.net/"
+    url = "https://insult.mattbas.org/api/en/insult.html"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
-    roast_messages = soup.find_all("p", class_="roast")
-    roast_message = random.choice(roast_messages).text
-    await ctx.send(f"{member.mention} {roast_message}")
+    insult = soup.find("h1").text
+    await ctx.send(f"{member.mention} {insult}")
 
 @bot.command()
 async def update(ctx):
