@@ -95,11 +95,10 @@ async def respond_to_user(content, channel):
         bot_response = "Goodbye! It was nice chatting with you."
     elif "help" in content.lower():
         bot_response = "I can assist you with health-related questions or provide general information. What's on your mind?"
-    elif "thanks" in content.lower():
-        bot_response = "You're welcome! Is there anything else I can help you with?"
     else:
-        bot_response = f"Thank you for saying '{content}'. How can I further assist you?"
-    await channel.send(bot_response)
+        bot_response = None 
+
+
 @bot.command()
 async def ascii(ctx):
     art = """
