@@ -33,8 +33,14 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    content = message.content
-    await process_message(content, message.channel)
+    if message.author == bot.user:
+        return
+
+    if message.reference and message.reference.message_id == bot.user.last_message_id:
+        content = message.content
+        await process_message(content, message.channel)
+
+    await bot.process_commands(message)
 
 async def process_message(content, channel):
     payload = {
@@ -42,11 +48,16 @@ async def process_message(content, channel):
     }
     headers = {"Authorization": f"Bearer {GEMINI_API_KEY}"}
     async with aiohttp.ClientSession() as session:
-        async with session.post("https://language.googleapis.com/v1/documents:analyzeSentences", json=payload, headers=headers) as response:
-            response_data = await response.json()
+        try:
+            async with session.post("https://language.googleapis.com/v1/documents:analyzeSentences", json=payload, headers=headers) as response:
+                response_data = await response.json()
+                print(response_data)
+                bot_response = "Hello! I am Bleep, your personal health robot."
+                last_message = await channel.send(bot_response)
+                bot.user.last_message_id = last_message.id
+        except aiohttp.ClientError as e:
+            print(f'Error: {e}')
 
-            bot_response = "Hello! I am Bleep, your personal health robot."
-            await channel.send(bot_response)
 
 @tasks.loop(seconds=5)
 async def change_status():
@@ -269,12 +280,5 @@ async def update(ctx):
         sys.exit(0)
     except Exception as e:
         await ctx.send(f"Failed to update the bot: {str(e)}")
-
-@bot.command(name="gemini")
-async def toggle_gemini(ctx):
-    global gemini_enabled
-    gemini_enabled = not gemini_enabled
-    status = "enabled" if gemini_enabled else "disabled"
-    await ctx.send(f"Gemini AI has been {status}.")
 
 bot.run(os.environ['TOKEN'])
