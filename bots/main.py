@@ -31,39 +31,6 @@ async def on_ready():
     print(f"logged as {bot.user}")
     change_status.start()
 
-@bot.event
-async def on_message(message):
-    if message.author == bot.user:
-        return
-
-    if not bot.conversation_started:
-        bot.conversation_started = True
-        await start_conversation(message.channel)
-
-    elif bot.conversation_started:
-        content = message.content
-        await respond_to_user(content, message.channel)
-
-    await bot.process_commands(message)
-
-async def start_conversation(channel):
-    bot_response = "Hello! I am Bleep, your personal health robot. How can I assist you today?"
-    await channel.send(bot_response)
-
-async def respond_to_user(content, channel):
-    if "hello" in content.lower():
-        bot_response = "Hello! How are you today?"
-    elif "goodbye" in content.lower():
-        bot_response = "Goodbye! It was nice chatting with you."
-    elif "help" in content.lower():
-        bot_response = "I can assist you with health-related questions or provide general information. What's on your mind?"
-    elif "thanks" in content.lower():
-        bot_response = "You're welcome! Is there anything else I can help you with?"
-    else:
-        bot_response = f"Thank you for saying '{content}'. How can I further assist you?"
-    await channel.send(bot_response)
-
-
 
 @tasks.loop(seconds=5)
 async def change_status():
@@ -100,8 +67,39 @@ async def on_message(message):
     if role is not None:  
         reaction = '<:test:1228493580763660319>'  
         await message.add_reaction(reaction)
-    await bot.process_command(message)
 
+
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+
+    if not bot.conversation_started:
+        bot.conversation_started = True
+        await start_conversation(message.channel)
+
+    elif bot.conversation_started:
+        content = message.content
+        await respond_to_user(content, message.channel)
+
+    await bot.process_commands(message)
+
+async def start_conversation(channel):
+    bot_response = "Hello! I am Bleep, your personal health robot. How can I assist you today?"
+    await channel.send(bot_response)
+
+async def respond_to_user(content, channel):
+    if "hello" in content.lower():
+        bot_response = "Hello! How are you today?"
+    elif "goodbye" in content.lower():
+        bot_response = "Goodbye! It was nice chatting with you."
+    elif "help" in content.lower():
+        bot_response = "I can assist you with health-related questions or provide general information. What's on your mind?"
+    elif "thanks" in content.lower():
+        bot_response = "You're welcome! Is there anything else I can help you with?"
+    else:
+        bot_response = f"Thank you for saying '{content}'. How can I further assist you?"
+    await channel.send(bot_response)
 @bot.command()
 async def ascii(ctx):
     art = """
