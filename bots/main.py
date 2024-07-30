@@ -23,18 +23,37 @@ bot = commands.Bot("!", intents=discord.Intents.all())
 allowed_user_ids = [1116012552728617041, 1097879047213686875, 560925232421011456, 372778919507787788, "1116012552728617041"]
 
 
-
+GEMINI_API_KEY = "AIzaSyAB72C0l0sa-B9Mysn0NcSnncUlA5v390YAIzaSyAB72C0l0sa-B9Mysn0NcSnncUlA5v390Y"
 
 @bot.event
 async def on_ready():
     print(f"logged as {bot.user}")
     change_status.start()
 
+    content = message.content
+    await process_message(content)
+
+async def process_message(content):
+    payload = {
+        "text": content,
+    }
+    headers = {"Authorization": f"Bearer {GEMINI_API_KEY}"}
+    response = requests.post("https://language.googleapis.com/v1/documents:analyzeSentences", json=payload, headers=headers)
+    response_data = response.json()
+
+    bot_response = "Hello! I'm Gemini AI."
+    await message.channel.send(bot_response)
 
 @tasks.loop(seconds=5)
 async def change_status():
   await bot.change_presence(activity=discord.Game(random.choice(["BLEEP", "BOOP"])))
 
+@bot.command(name="gemini")
+async def toggle_gemini(ctx):
+    global gemini_enabled
+    gemini_enabled = not gemini_enabled
+    status = "enabled" if gemini_enabled else "disabled"
+    await ctx.send(f"Gemini AI has been {status}.")
 
 
 @bot.event
