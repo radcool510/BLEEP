@@ -36,27 +36,33 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if message.reference and message.reference.message_id == bot.user.last_message_id:
+    if not bot.conversation_started:
+        bot.conversation_started = True
+        await start_conversation(message.channel)
+
+    elif bot.conversation_started:
         content = message.content
-        await process_message(content, message.channel)
+        await respond_to_user(content, message.channel)
 
     await bot.process_commands(message)
 
-async def process_message(content, channel):
-    payload = {
-        "text": content,
-    }
-    headers = {"Authorization": f"Bearer {GEMINI_API_KEY}"}
-    async with aiohttp.ClientSession() as session:
-        try:
-            async with session.post("https://language.googleapis.com/v1/documents:analyzeSentences", json=payload, headers=headers) as response:
-                response_data = await response.json()
-                print(response_data)
-                bot_response = "Hello! I am Bleep, your personal health robot."
-                last_message = await channel.send(bot_response)
-                bot.user.last_message_id = last_message.id
-        except aiohttp.ClientError as e:
-            print(f'Error: {e}')
+async def start_conversation(channel):
+    bot_response = "Hello! I am Bleep, your personal health robot. How can I assist you today?"
+    await channel.send(bot_response)
+
+async def respond_to_user(content, channel):
+    if "hello" in content.lower():
+        bot_response = "Hello! How are you today?"
+    elif "goodbye" in content.lower():
+        bot_response = "Goodbye! It was nice chatting with you."
+    elif "help" in content.lower():
+        bot_response = "I can assist you with health-related questions or provide general information. What's on your mind?"
+    elif "thanks" in content.lower():
+        bot_response = "You're welcome! Is there anything else I can help you with?"
+    else:
+        bot_response = f"Thank you for saying '{content}'. How can I further assist you?"
+    await channel.send(bot_response)
+
 
 
 @tasks.loop(seconds=5)
