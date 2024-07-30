@@ -18,7 +18,7 @@ from bs4 import BeautifulSoup
 import aiohttp
 
 bot = commands.Bot("!", intents=discord.Intents.all())
-
+bot.conversation_started = False
 
 
 allowed_user_ids = [1116012552728617041, 1097879047213686875, 560925232421011456, 372778919507787788, "1116012552728617041"]
