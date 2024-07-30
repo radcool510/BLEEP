@@ -15,6 +15,7 @@ import json
 import urllib.parse
 import requests
 from bs4 import BeautifulSoup
+import aiohttp
 
 bot = commands.Bot("!", intents=discord.Intents.all())
 
@@ -30,30 +31,28 @@ async def on_ready():
     print(f"logged as {bot.user}")
     change_status.start()
 
+@bot.event
+async def on_message(message):
     content = message.content
-    await process_message(content)
+    await process_message(content, message.channel)
 
-async def process_message(content):
+async def process_message(content, channel):
     payload = {
         "text": content,
     }
     headers = {"Authorization": f"Bearer {GEMINI_API_KEY}"}
-    response = requests.post("https://language.googleapis.com/v1/documents:analyzeSentences", json=payload, headers=headers)
-    response_data = response.json()
+    async with aiohttp.ClientSession() as session:
+        async with session.post("https://language.googleapis.com/v1/documents:analyzeSentences", json=payload, headers=headers) as response:
+            response_data = await response.json()
 
-    bot_response = "Hello! I'm Gemini AI."
-    await message.channel.send(bot_response)
+            bot_response = "Hello! I am Bleep, your personal health robot."
+            await channel.send(bot_response)
 
 @tasks.loop(seconds=5)
 async def change_status():
   await bot.change_presence(activity=discord.Game(random.choice(["BLEEP", "BOOP"])))
 
-@bot.command(name="gemini")
-async def toggle_gemini(ctx):
-    global gemini_enabled
-    gemini_enabled = not gemini_enabled
-    status = "enabled" if gemini_enabled else "disabled"
-    await ctx.send(f"Gemini AI has been {status}.")
+
 
 
 @bot.event
@@ -270,5 +269,12 @@ async def update(ctx):
         sys.exit(0)
     except Exception as e:
         await ctx.send(f"Failed to update the bot: {str(e)}")
+
+@bot.command(name="gemini")
+async def toggle_gemini(ctx):
+    global gemini_enabled
+    gemini_enabled = not gemini_enabled
+    status = "enabled" if gemini_enabled else "disabled"
+    await ctx.send(f"Gemini AI has been {status}.")
 
 bot.run(os.environ['TOKEN'])
