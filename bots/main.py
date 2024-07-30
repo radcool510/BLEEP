@@ -16,15 +16,17 @@ import urllib.parse
 import requests
 from bs4 import BeautifulSoup
 import aiohttp
+import google.generativeai as genai
+
+API_KEY = os.environ["AIzaSyAB72C0l0sa-B9Mysn0NcSnncUlA5v390YAIzaSyAB72C0l0sa-B9Mysn0NcSnncUlA5v390Y"]
+
+genai.configure(api_key=API_KEY)
 
 bot = commands.Bot("!", intents=discord.Intents.all())
 bot.conversation_started = False
 
 
 allowed_user_ids = [1116012552728617041, 1097879047213686875, 560925232421011456, 372778919507787788, "1116012552728617041"]
-
-
-GEMINI_API_KEY = "AIzaSyAB72C0l0sa-B9Mysn0NcSnncUlA5v390YAIzaSyAB72C0l0sa-B9Mysn0NcSnncUlA5v390Y"
 
 @bot.event
 async def on_ready():
@@ -283,5 +285,11 @@ async def update(ctx):
         sys.exit(0)
     except Exception as e:
         await ctx.send(f"Failed to update the bot: {str(e)}")
+
+@bot.command(name="generate")
+async def generate(ctx, *, prompt):
+    model = genai.GenerativeModel('gemini-1.5-flash')
+    response = model.generate_content(prompt)
+    await ctx.send(response.text)
 
 bot.run(os.environ['TOKEN'])
